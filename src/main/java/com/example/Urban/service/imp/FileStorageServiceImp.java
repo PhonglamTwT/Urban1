@@ -26,7 +26,11 @@ public class FileStorageServiceImp implements FileStorageService {
     @Override
     public void save(MultipartFile file) {
         try {
-            Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+            String originalFilename = file.getOriginalFilename();
+            // Thay thế khoảng trắng bằng dấu gạch nối
+            String sanitizedFilename = originalFilename.replace(" ", "-");
+
+            Files.copy(file.getInputStream(), this.root.resolve(sanitizedFilename), StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             if (e instanceof FileAlreadyExistsException) {
                 throw new RuntimeException("A file of that name already exists.");
@@ -36,18 +40,19 @@ public class FileStorageServiceImp implements FileStorageService {
     }
 
     @Override
-    public Resource load(String filename) {
+    public UrlResource load(String filename) {
         try {
-            Path pathImage = root.resolve(filename);
-            Resource resource = new UrlResource(pathImage.toUri());
+            Path file = root.resolve(filename);  // Ensure 'root' is initialized somewhere in your class
+            UrlResource resource = new UrlResource(file.toUri());
 
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            } else {
-                throw new RuntimeException("Loi khong tim thay file hoac khong doc duoc file");
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new RuntimeException("File not found or not readable: " + filename);
             }
+
+            return resource;
+
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Loi khong tim thay file " + e.getMessage());
+            throw new RuntimeException("Error constructing URL for the file: " + filename, e);
         }
     }
 

@@ -20,5 +20,5 @@ public interface EmployeeService {
 
     ReqRes deleteEmployeeJwt(int employeeId);
 
-    ReqRes createEmployeeAndAccountJwt(ReqRes createaccountRequest);
+    ReqRes createEmployeeAndAccountJwt(MultipartFile file, ReqRes createaccountRequest);
 }

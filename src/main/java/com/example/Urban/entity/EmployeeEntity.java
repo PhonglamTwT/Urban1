@@ -1,5 +1,7 @@
 package com.example.Urban.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -37,19 +39,15 @@ public class EmployeeEntity {
     @Column(name="headquarter")
     String headquarter;
 
+    @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "employee")
     private List<EventEntity> events;
 
+    @JsonIgnore
     @ToString.Exclude
     @OneToOne(mappedBy = "employee")
     private AccountEntity account;
-
-    public int Getid(){
-        return id;
-    }
-    public void Setid(int id){
-        this.id=id;
-    }
+    
 
 }

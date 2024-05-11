@@ -1,5 +1,6 @@
 package com.example.Urban.service.imp;
 
+import com.example.Urban.controller.ManagerController;
 import com.example.Urban.dto.EmployeeAccountDTO;
 import com.example.Urban.dto.ReqRes;
 import com.example.Urban.entity.AccountEntity;
@@ -10,9 +11,16 @@ import com.example.Urban.service.EmployeeService;
 import com.example.Urban.service.FileStorageService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +44,25 @@ public class EmployeeServiceImp implements EmployeeService {
         ReqRes reqRes = new ReqRes();
         try {
             List<EmployeeEntity> result = employeeRepository.findAll();
+
+
             if (!result.isEmpty()) {
                 reqRes.setEmployeeList(result);
+
+
+                // Với mỗi nhân viên, thiết lập URL hình ảnh nếu có
+                result.forEach(employee -> {
+                    String filename = employee.getImage(); // Giả sử trường image là tên file lưu trữ
+                    if (filename != null && !filename.isEmpty()) {
+                        String imageUrl = MvcUriComponentsBuilder
+                                .fromMethodName(ManagerController.class, "getFile", filename)
+                                .build()
+                                .toString();
+                        employee.setImage(imageUrl);
+                    }
+                });
+
+
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Successful");
             } else {
@@ -50,6 +75,13 @@ public class EmployeeServiceImp implements EmployeeService {
         }
         return reqRes;
     }
+
+
+
+
+
+
+
 
     @Override
     public ReqRes getAllAccount() {
@@ -74,6 +106,11 @@ public class EmployeeServiceImp implements EmployeeService {
     @Override
     public ReqRes updateEmployeeJwt(int employeeId, MultipartFile file, String name, String email, String phone, String gender, String address, String position, String headquarter, String username, String password, String role) {
         ReqRes reqRes = new ReqRes();
+
+        String originalFilename = file.getOriginalFilename();
+        // Thay thế khoảng trắng bằng dấu gạch nối
+        String sanitizedFilename = originalFilename.replace(" ", "-");
+
         try {
             fileStorageService.save(file);
             Optional<EmployeeEntity> empOptional = employeeRepository.findById(employeeId);
@@ -83,7 +120,7 @@ public class EmployeeServiceImp implements EmployeeService {
                 if(!existPhoto.equals(file.getOriginalFilename())){
                     fileStorageService.deleleEmployeePhoto(existPhoto);
                 }
-                employee.setImage(file.getOriginalFilename());
+                employee.setImage(sanitizedFilename);
                 employee.setName(name);
                 employee.setEmail(email);
                 employee.setPhone(phone);
@@ -140,11 +177,18 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public ReqRes createEmployeeAndAccountJwt(ReqRes createaccountRequest) {
+    public ReqRes createEmployeeAndAccountJwt(MultipartFile file, ReqRes createaccountRequest) {
         ReqRes resp = new ReqRes();
+
+        fileStorageService.save(file);
+
+        String originalFilename = file.getOriginalFilename();
+        // Thay thế khoảng trắng bằng dấu gạch nối
+        String sanitizedFilename = originalFilename.replace(" ", "-");
+
         try {
             EmployeeEntity emp = new EmployeeEntity();
-            emp.setImage(createaccountRequest.getImage());
+            emp.setImage(sanitizedFilename);
             emp.setName(createaccountRequest.getName());
             emp.setEmail(createaccountRequest.getEmail());
             emp.setPhone(createaccountRequest.getPhone());
@@ -152,7 +196,8 @@ public class EmployeeServiceImp implements EmployeeService {
             emp.setAddress(createaccountRequest.getAddress());
             emp.setPosition(createaccountRequest.getPosition());
             emp.setHeadquarter(createaccountRequest.getHeadquarter());
-            EmployeeEntity employeeResult = employeeEntity.save(emp);
+
+            EmployeeEntity employeeResult = employeeRepository.save(emp);
 
             AccountEntity account = new AccountEntity();
             account.setUsername(createaccountRequest.getUsername());
@@ -160,7 +205,8 @@ public class EmployeeServiceImp implements EmployeeService {
             account.setPassword(passwordEncoder.encode(createaccountRequest.getPassword()));
             account.setEmployee(employeeResult);
             AccountEntity accountResult = accountRepository.save(account);
-            if (accountResult.Getid() > 0 && employeeResult.Getid() > 0) {
+
+            if (accountResult.Getid() > 0 && employeeResult.getId() > 0) {
                 resp.setAccount((accountResult));
                 resp.setEmployee(employeeResult);
                 resp.setMessage("User Saved Successfully");
