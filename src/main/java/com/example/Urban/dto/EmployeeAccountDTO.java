@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class EmployeeAccountDTO {
+
     private String image;
     private String name;
     private String email;
