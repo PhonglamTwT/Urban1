@@ -20,6 +20,7 @@ public class ReqRes {
     private String refreshToken;
     private String expirationTime;
 
+    private int employee_id;
     private String image;
     private String name;
     private String email;
@@ -33,7 +34,7 @@ public class ReqRes {
     private String password;
     private String role;
 
-    private String employee_id;
+
     private AccountEntity account;
     private EmployeeEntity employee;
     private List<AccountEntity> accountList;
