@@ -1,16 +1,24 @@
 package com.example.Urban.controller;
 
 
+import com.example.Urban.dto.EmployeeDTO;
 import com.example.Urban.dto.ReqRes;
 import com.example.Urban.service.EmployeeService;
 import com.example.Urban.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -59,6 +67,16 @@ public class ManagerController {
                                                     @RequestParam String address, @RequestParam String position, @RequestParam String headquarter,
                                                     @RequestParam String username, @RequestParam String password, @RequestParam String role){
         return ResponseEntity.ok(EmployeeService.updateEmployeeJwt(employeeId, file, name, email, phone, gender, address, position, headquarter, username, password, role ));
+    }
+
+    @GetMapping("/searchEmployee")
+    public ResponseEntity<EmployeeDTO> searchEmployee(@RequestParam Map<String,String> params,
+                                                      @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd")  Date day){
+        return ResponseEntity.ok(EmployeeService.getEmployee(params.get("name"),params.get("headquarter"),params.get("position"),day));
+    }
+    @GetMapping("/getByDate")
+    public ResponseEntity<List<EmployeeDTO>> getByDate(@RequestParam @DateTimeFormat(pattern="yyyy-MM-dd")  Date day){
+        return ResponseEntity.ok(EmployeeService.getByDay(day));
     }
 
 }

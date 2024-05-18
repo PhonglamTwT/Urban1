@@ -95,7 +95,6 @@ public class EventServiceImp implements EventService {
         ReqRes resp = new ReqRes();
         try {
             EventEntity event = new EventEntity();
-            event.setId(eventDTO.getId());
             event.setName(eventDTO.getName());
             event.setWorktime(eventDTO.getWorktime());
             event.setWorkplace(eventDTO.getWorkplace());
