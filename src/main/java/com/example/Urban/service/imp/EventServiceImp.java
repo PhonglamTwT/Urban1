@@ -5,6 +5,7 @@ import com.example.Urban.dto.ReqRes;
 import com.example.Urban.entity.AccountEntity;
 import com.example.Urban.entity.EmployeeEntity;
 import com.example.Urban.entity.EventEntity;
+import com.example.Urban.repository.EmployeeRepository;
 import com.example.Urban.repository.EventRepository;
 import com.example.Urban.service.EventService;
 import jakarta.transaction.Transactional;
@@ -18,6 +19,8 @@ import java.util.Optional;
 public class EventServiceImp implements EventService {
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @Override
     public List<EventEntity> getAllEvent() { return eventRepository.findAll(); }
@@ -94,16 +97,24 @@ public class EventServiceImp implements EventService {
 //        return event;
         ReqRes resp = new ReqRes();
         try {
-            EventEntity event = new EventEntity();
-            event.setName(eventDTO.getName());
-            event.setWorktime(eventDTO.getWorktime());
-            event.setWorkplace(eventDTO.getWorkplace());
-            event.setDay(eventDTO.getDay());
-            event.setStatus(eventDTO.getStatus());
-            eventRepository.save(event);
+            Optional<EmployeeEntity> employee = employeeRepository.findById(eventDTO.getEmployee_id());
 
-            resp.setMessage("User Saved Successfully");
-            resp.setStatusCode(200);
+            if(employee.isPresent()){
+                EventEntity event = new EventEntity();
+                event.setName(eventDTO.getName());
+                event.setWorktime(eventDTO.getWorktime());
+                event.setWorkplace(eventDTO.getWorkplace());
+                event.setDay(eventDTO.getDay());
+                event.setStatus(eventDTO.getStatus());
+                event.setEmployee(employee.get());
+
+                eventRepository.save(event);
+                resp.setMessage("Event add successfully");
+                resp.setStatusCode(200);
+            }
+            resp.setMessage("User not found");
+            resp.setStatusCode(404);
+
         }catch (Exception e){
             resp.setStatusCode(500);
             resp.setError(e.getMessage());

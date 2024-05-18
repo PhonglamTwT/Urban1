@@ -6,6 +6,7 @@ import java.util.Date;
 
 @Data
 public class EventDTO {
+    private int employee_id;
     private int id;
     private String name;
     private Date day;
