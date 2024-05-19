@@ -39,7 +39,7 @@ public class LoginServiceImp implements LoginService {
             tokenCacheService.saveJwtToCache(loginRequest, jwt);
             return "Successfully Logged In";
         } catch (Exception e) {
-            throw new RuntimeException("Employee not found with id: " + e);
+            throw new RuntimeException("Logged In Failed");
         }
 
     }
