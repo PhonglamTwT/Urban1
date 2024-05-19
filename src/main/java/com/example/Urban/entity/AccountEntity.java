@@ -60,14 +60,6 @@ public class AccountEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-//    @Override
-//    public String toString() {
-//        return "AccountEntity{" +
-//                "id=" + id +
-//                ", username='" + username + '\'' +
-//                ", password='" + password + '\'' +
-//                ", role='" + role + '\'' +
-//                '}';
-//    }
+
 
 }

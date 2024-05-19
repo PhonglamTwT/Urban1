@@ -1,10 +1,12 @@
 package com.example.Urban.service.imp;
 
 import com.example.Urban.controller.ManagerController;
-import com.example.Urban.dto.ReqRes;
+import com.example.Urban.dto.AccountDTO;
 import com.example.Urban.repository.AccountRepository;
 import com.example.Urban.service.JWTUtils;
 import com.example.Urban.service.LoginService;
+import com.example.Urban.service.TokenCacheService;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,51 +23,57 @@ public class LoginServiceImp implements LoginService {
     private JWTUtils jwtUtils;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private TokenCacheService tokenCacheService;
+
+
 
     @Override
-    public ReqRes loginJwt(ReqRes loginRequest) {
-        ReqRes response = new ReqRes();
+    public String loginJwt(AccountDTO loginRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-            var user = accountRepository.findByUsername(loginRequest.getUsername())
+            var loginUser  = accountRepository.findByUsername(loginRequest.getUsername())
                     .orElseThrow(() -> new RuntimeException("User not found"));
-            var jwt = jwtUtils.generateToken(user);
-            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
-            response.setStatusCode(200);
-            response.setToken(jwt);
-
-
-            response.setEmployee_id(user.getEmployee().getId());
-
-            //  thiết lập URL hình ảnh
-
-                String filename = user.getEmployee().getImage(); // Giả sử trường image là tên file lưu trữ
-                if (filename != null && !filename.isEmpty()) {
-                    String imageUrl = MvcUriComponentsBuilder
-                            .fromMethodName(ManagerController.class, "getFile", filename)
-                            .build()
-                            .toString();
-                    response.setImage(imageUrl);
-                }
-
-
-            response.setName(user.getEmployee().getName());
-            response.setEmail(user.getEmployee().getEmail());
-            response.setPhone(user.getEmployee().getPhone());
-            response.setGender(user.getEmployee().getGender());
-            response.setAddress(user.getEmployee().getAddress());
-            response.setPosition(user.getEmployee().getPosition());
-            response.setPosition(user.getEmployee().getHeadquarter());
-            response.setRole(user.getRole());
-
-            response.setRefreshToken(refreshToken);
-            response.setExpirationTime("24Hrs");
-            response.setMessage("Successfully Logged In");
+            String jwt = jwtUtils.generateToken(loginUser);
+            tokenCacheService.saveJwtToCache(loginRequest, jwt);
+            return "Successfully Logged In";
         } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setMessage("Error occurred: " + e.getMessage());
+            throw new RuntimeException("Employee not found with id: " + e);
         }
-        return response;
+
     }
+
+//            var jwt = jwtUtils.generateToken(user);
+//            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+
+//            response.setStatusCode(200);
+//            response.setToken(jwt);
+//
+//            response.setEmployee_id(user.getEmployee().getId());
+
+//            //  thiết lập URL hình ảnh
+//
+//            String filename = user.getEmployee().getImage(); // Giả sử trường image là tên file lưu trữ
+//            if (filename != null && !filename.isEmpty()) {
+//                String imageUrl = MvcUriComponentsBuilder
+//                        .fromMethodName(ManagerController.class, "getFile", filename)
+//                        .build()
+//                        .toString();
+//                response.setImage(imageUrl);
+//            }
+//            response.setName(user.getEmployee().getName());
+//            response.setEmail(user.getEmployee().getEmail());
+//            response.setPhone(user.getEmployee().getPhone());
+//            response.setGender(user.getEmployee().getGender());
+//            response.setAddress(user.getEmployee().getAddress());
+//            response.setPosition(user.getEmployee().getPosition());
+//            response.setHeadquarter(user.getEmployee().getHeadquarter());
+//
+////            response.setRole(user.getRole());
+//
+//            response.setRefreshToken(refreshToken);
+//            response.setExpirationTime("24Hrs");
+//            response.setMessage("Successfully Logged In");
+
 }
