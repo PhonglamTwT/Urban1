@@ -1,8 +1,8 @@
 package com.example.Urban.controller;
 
-
 import com.example.Urban.dto.EmployeeDTO;
 import com.example.Urban.dto.ReqRes;
+import com.example.Urban.dto.EmployeeAccountDTO;
 import com.example.Urban.service.EmployeeService;
 import com.example.Urban.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +14,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
 @CrossOrigin
 @RestController
-@RequestMapping("/manager")
+@RequestMapping("/public")
 public class ManagerController {
     @Autowired
     private EmployeeService EmployeeService;
@@ -30,15 +30,14 @@ public class ManagerController {
 //--------------------------------------------------------------------------------------------------
 
     @PostMapping("/addEmploy")
-    public ResponseEntity<ReqRes> addEmployeeAndAccountJwt(@RequestParam MultipartFile file, @ModelAttribute ReqRes reg){
-
-        return ResponseEntity.ok(EmployeeService.createEmployeeAndAccountJwt(file, reg));
+    public ResponseEntity<String> addEmployeeAndAccountJwt(@RequestParam("file") MultipartFile file, @ModelAttribute EmployeeAccountDTO empAcc){
+        String result = EmployeeService.createEmployeeAndAccountJwt(file,empAcc);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
-
     @GetMapping("/showEmploy")
-    public ResponseEntity<ReqRes> getAllEmployeeJwt(){
-        return ResponseEntity.ok(EmployeeService.getAllEmployeeJwt());
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployeeJwt(){
+        List<EmployeeDTO> employees = EmployeeService.getAllEmployeeJwt();
+        return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
 
@@ -58,15 +57,18 @@ public class ManagerController {
     }
 
     @DeleteMapping("/deleteEmployee")
-    public ResponseEntity<ReqRes> deleteEmployeeJwt(@RequestParam int employeeId){
-        return ResponseEntity.ok(EmployeeService.deleteEmployeeJwt(employeeId));
+    public ResponseEntity<String> deleteEmployeeJwt(@RequestParam int employeeId){
+        String result = EmployeeService.deleteEmployeeJwt(employeeId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
     @PutMapping("/updateEmployee")
-    public ResponseEntity<ReqRes> updateEmployeeJwt(@RequestParam int employeeId , @RequestParam MultipartFile file, @RequestParam String name,
+    public ResponseEntity<EmployeeAccountDTO> updateEmployeeJwt(@RequestParam int employeeId , @RequestParam MultipartFile file, @RequestParam String name,
                                                     @RequestParam String email, @RequestParam String phone, @RequestParam String gender,
                                                     @RequestParam String address, @RequestParam String position, @RequestParam String headquarter,
                                                     @RequestParam String username, @RequestParam String password, @RequestParam String role){
-        return ResponseEntity.ok(EmployeeService.updateEmployeeJwt(employeeId, file, name, email, phone, gender, address, position, headquarter, username, password, role ));
+        EmployeeAccountDTO employeeAccountDTO = EmployeeService.updateEmployeeJwt(employeeId, file, name, email, phone, gender, address, position, headquarter, username, password, role );
+        return new ResponseEntity<>(employeeAccountDTO, HttpStatus.OK);
     }
 
     @GetMapping("/searchEmployee")

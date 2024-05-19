@@ -1,19 +1,23 @@
 package com.example.Urban.dto;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.example.Urban.entity.AccountEntity;
 import lombok.Data;
+
 import java.util.List;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmployeeDTO {
+
+    private String image;
     private String name;
     private String email;
     private String phone;
+    private String gender;
+    private String address;
     private String position;
     private String headquarter;
-    private Boolean status;
 
+
+    public void setAccount(AccountDTO accountDTO) {
+
+    }
 }
