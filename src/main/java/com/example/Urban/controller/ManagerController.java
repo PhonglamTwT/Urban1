@@ -21,7 +21,7 @@ import java.util.Map;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/public")
+@RequestMapping("/manager")
 public class ManagerController {
     @Autowired
     private EmployeeService EmployeeService;

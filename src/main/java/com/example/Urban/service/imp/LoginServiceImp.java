@@ -2,6 +2,7 @@ package com.example.Urban.service.imp;
 
 import com.example.Urban.controller.ManagerController;
 import com.example.Urban.dto.AccountDTO;
+import com.example.Urban.dto.LoginDTO;
 import com.example.Urban.repository.AccountRepository;
 import com.example.Urban.service.JWTUtils;
 import com.example.Urban.service.LoginService;
@@ -29,7 +30,8 @@ public class LoginServiceImp implements LoginService {
 
 
     @Override
-    public String loginJwt(AccountDTO loginRequest) {
+    public LoginDTO loginJwt(AccountDTO loginRequest) {
+        LoginDTO loginDTO = new LoginDTO();
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -37,7 +39,10 @@ public class LoginServiceImp implements LoginService {
                     .orElseThrow(() -> new RuntimeException("User not found"));
             String jwt = jwtUtils.generateToken(loginUser);
             tokenCacheService.saveJwtToCache(loginRequest, jwt);
-            return "Successfully Logged In";
+            loginDTO.setToken(jwt);
+            loginDTO.setMessage("Successfully Logged In");
+            loginDTO.setEmployeeId(loginUser.getEmployee().getId());
+            return loginDTO;
         } catch (Exception e) {
             throw new RuntimeException("Employee not found with id: " + e);
         }

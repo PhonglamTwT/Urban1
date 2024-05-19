@@ -30,12 +30,6 @@ public class AccountEntity implements UserDetails {
     @JoinColumn(name = "employee_id")
     private EmployeeEntity employee;
 
-    public int Getid(){
-        return id;
-    }
-    public void Setid(int id){
-        this.id=id;
-    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));

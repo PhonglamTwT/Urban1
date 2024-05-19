@@ -1,6 +1,7 @@
 package com.example.Urban.controller;
 
 import com.example.Urban.dto.AccountDTO;
+import com.example.Urban.dto.LoginDTO;
 import com.example.Urban.service.EmployeeService;
 import com.example.Urban.service.LoginService;
 import com.example.Urban.service.TokenCacheService;
@@ -26,12 +27,10 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody AccountDTO loginRequest){
-        String result = loginService.loginJwt(loginRequest);
-
+    public ResponseEntity<LoginDTO> login(@RequestBody AccountDTO loginRequest){
+        LoginDTO result = loginService.loginJwt(loginRequest);
         String cacheJwt = tokenCacheService.getJwtFromCache(loginRequest);
         System.out.println("JWT from cache: " + cacheJwt);
-
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

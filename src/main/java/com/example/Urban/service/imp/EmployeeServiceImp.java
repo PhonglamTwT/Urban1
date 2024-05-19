@@ -109,6 +109,10 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public EmployeeAccountDTO updateEmployeeJwt(int employeeId, MultipartFile file, String name, String email, String phone, String gender, String address, String position, String headquarter, String username, String password, String role) {
+        AccountEntity account = accountRepository.findByEmployeeId(employeeId);
+        if(!account.getUsername().equals(username) && accountRepository.findByUsername(username).isPresent()){
+            throw new RuntimeException("Username exist");
+        }
         String sanitizedFilename = saveFile(file);
         Optional<EmployeeEntity> empOptional = employeeRepository.findById(employeeId);
 
@@ -177,6 +181,9 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public String createEmployeeAndAccountJwt(MultipartFile file, EmployeeAccountDTO createAccountRequest) {
+        if(accountRepository.findByUsername(createAccountRequest.getUsername()).isPresent()){
+            throw new RuntimeException("Username exist");
+        }
         String sanitizedFilename = saveFile(file);
         try {
             EmployeeEntity emp = new EmployeeEntity();
@@ -198,7 +205,7 @@ public class EmployeeServiceImp implements EmployeeService {
             account.setEmployee(employeeResult);
             AccountEntity accountResult = accountRepository.save(account);
 
-            if (accountResult.Getid() > 0 && employeeResult.getId() > 0) {
+            if (accountResult.getId() > 0 && employeeResult.getId() > 0) {
                 return "Employee create successfully";
             }
         }catch (Exception e){

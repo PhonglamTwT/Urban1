@@ -1,8 +1,9 @@
 package com.example.Urban.service;
 
 import com.example.Urban.dto.AccountDTO;
+import com.example.Urban.dto.LoginDTO;
 import org.apache.catalina.User;
 
 public interface LoginService {
-    String loginJwt(AccountDTO loginRequest);
+    LoginDTO loginJwt(AccountDTO loginRequest);
 }
