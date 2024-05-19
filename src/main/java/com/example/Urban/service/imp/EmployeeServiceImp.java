@@ -108,41 +108,11 @@ public class EmployeeServiceImp implements EmployeeService {
 
     }
 
-//        ReqRes reqRes = new ReqRes();
-//        try {
-//            Optional<EmployeeEntity> empOptional = employeeRepository.findById(employeeId);
-//            if (empOptional.isPresent()) {
-//                EmployeeEntity employee = empOptional.get();
-//                AccountEntity account = employee.getAccount();
-//                accountRepository.delete(account);
-//                fileStorageService.deleleEmployeePhoto(employee.getImage());
-//                employeeRepository.delete(employee);
-//                reqRes.setStatusCode(200);
-//                reqRes.setMessage("User deleted successfully");
-//            } else {
-//                reqRes.setStatusCode(404);
-//                reqRes.setMessage("User not found for deletion");
-//            }
-//        } catch (Exception e) {
-//            reqRes.setStatusCode(500);
-//            reqRes.setMessage("Error occurred while deleting user: " + e.getMessage());
-//        }
-//        return reqRes;
-//    }
-
     @Override
     public String createEmployeeAndAccountJwt(MultipartFile file, EmployeeAccountDTO createAccountRequest) {
         String sanitizedFilename = saveFile(file);
         try {
-            EmployeeEntity emp = new EmployeeEntity();
-            emp.setImage(sanitizedFilename);
-            emp.setName(createAccountRequest.getName());
-            emp.setEmail(createAccountRequest.getEmail());
-            emp.setPhone(createAccountRequest.getPhone());
-            emp.setGender(createAccountRequest.getGender());
-            emp.setAddress(createAccountRequest.getAddress());
-            emp.setPosition(createAccountRequest.getPosition());
-            emp.setHeadquarter(createAccountRequest.getHeadquarter());
+            EmployeeEntity emp = getEmployee(createAccountRequest, sanitizedFilename);
 
             EmployeeEntity employeeResult = employeeRepository.save(emp);
 
@@ -162,6 +132,18 @@ public class EmployeeServiceImp implements EmployeeService {
         throw new RuntimeException("Can't create Employee " );
     }
 
+    private EmployeeEntity getEmployee(EmployeeAccountDTO createAccountRequest, String sanitizedFilename) {
+        EmployeeEntity emp = new EmployeeEntity();
+        emp.setImage(sanitizedFilename);
+        emp.setName(createAccountRequest.getName());
+        emp.setEmail(createAccountRequest.getEmail());
+        emp.setPhone(createAccountRequest.getPhone());
+        emp.setGender(createAccountRequest.getGender());
+        emp.setAddress(createAccountRequest.getAddress());
+        emp.setPosition(createAccountRequest.getPosition());
+        emp.setHeadquarter(createAccountRequest.getHeadquarter());
+        return emp;
+    }
     private void updateEmployeeDetails(EmployeeEntity employee, String image, String name, String email, String phone, String gender, String address, String position, String headquarter) {
         employee.setImage(image);
         employee.setName(name);
