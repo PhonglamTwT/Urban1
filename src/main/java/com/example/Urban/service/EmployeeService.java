@@ -1,24 +1,22 @@
 package com.example.Urban.service;
 
-import com.example.Urban.dto.ReqRes;
-import com.example.Urban.entity.AccountEntity;
-import com.example.Urban.entity.EmployeeEntity;
-
+import com.example.Urban.dto.AccountDTO;
 import com.example.Urban.dto.EmployeeAccountDTO;
+import com.example.Urban.dto.EmployeeDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface EmployeeService {
 
-    ReqRes getAllEmployeeJwt();
+    List<EmployeeDTO> getAllEmployeeJwt();
 
-    ReqRes getAllAccount();
+    List<AccountDTO> getAllAccount();
 
-    ReqRes updateEmployeeJwt(int employeeId, MultipartFile file, String name, String email, String phone, String gender, String address,
-                                  String position, String headquarter, String username, String password, String role);
+    EmployeeAccountDTO updateEmployeeJwt(int employeeId, MultipartFile file, String name, String email, String phone, String gender, String address,
+                                         String position, String headquarter, String username, String password, String role);
 
-    ReqRes deleteEmployeeJwt(int employeeId);
+    String deleteEmployeeJwt(int employeeId);
 
-    ReqRes createEmployeeAndAccountJwt(MultipartFile file, ReqRes createaccountRequest);
+    String createEmployeeAndAccountJwt(MultipartFile file, EmployeeAccountDTO createaccountRequest);
 }

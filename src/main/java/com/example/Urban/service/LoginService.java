@@ -1,7 +1,8 @@
 package com.example.Urban.service;
 
-import com.example.Urban.dto.ReqRes;
+import com.example.Urban.dto.AccountDTO;
+import org.apache.catalina.User;
 
 public interface LoginService {
-    ReqRes loginJwt(ReqRes loginRequest);
+    String loginJwt(AccountDTO loginRequest);
 }
