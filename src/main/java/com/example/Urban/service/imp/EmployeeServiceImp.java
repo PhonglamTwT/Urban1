@@ -4,7 +4,6 @@ import com.example.Urban.controller.ManagerController;
 import com.example.Urban.dto.AccountDTO;
 import com.example.Urban.dto.EmployeeAccountDTO;
 import com.example.Urban.dto.EmployeeDTO;
-import com.example.Urban.dto.ReqRes;
 import com.example.Urban.entity.AccountEntity;
 import com.example.Urban.entity.EmployeeEntity;
 import com.example.Urban.repository.AccountRepository;
@@ -69,7 +68,7 @@ public class EmployeeServiceImp implements EmployeeService {
             dto.setPhone(employee.getPhone());
             dto.setPosition(employee.getPosition());
             dto.setHeadquarter(employee.getHeadquarter());
-            dto.setStatus(eventRepository.existsByEmployeeIdAndDay(userId,day));
+//            dto.setStatus(eventRepository.existsByEmployeeIdAndDay(userId,day));
             return dto;
         }else{
             return null;
@@ -92,7 +91,7 @@ public class EmployeeServiceImp implements EmployeeService {
                 dto.setPhone(employee.getPhone());
                 dto.setPosition(employee.getPosition());
                 dto.setHeadquarter(employee.getHeadquarter());
-                dto.setStatus(eventRepository.existsByEmployeeIdAndDay(userId, day));
+//                dto.setStatus(eventRepository.existsByEmployeeIdAndDay(userId, day));
 
                 dtos.add(dto);
             }

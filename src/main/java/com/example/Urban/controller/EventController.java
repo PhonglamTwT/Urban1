@@ -17,23 +17,29 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-//    @GetMapping("/showEvent")
-//    public ResponseEntity<List<EventEntity>> GetAllEvent() {
-//        List<EventEntity> event = eventService.getAllEvent();
-//        return ResponseEntity.ok().body(event);
-//    }
-//
-//    @PostMapping("/addEvent")
-//    public ResponseEntity<ReqRes> addEvent(@RequestBody EventDTO eventDTO) {
-//        return ResponseEntity.ok(eventService.createEvent(eventDTO));
-//    }
-//
-//    @PostMapping("/updateEvent")
-//    public ResponseEntity<ReqRes> updateEmployee(@RequestBody EventDTO eventDTO){
-//        return ResponseEntity.ok(eventService.updateEvent(eventDTO));
-//    }
-//    @DeleteMapping("/deleteEvent")
-//    public ResponseEntity<ReqRes> deleteEvent(@RequestParam int eventId){
-//        return ResponseEntity.ok(eventService.deleteEvent(eventId));
-//    }
+    @GetMapping("/showEvent")
+    public ResponseEntity<List<EventEntity>> GetAllEvent() {
+        List<EventEntity> event = eventService.getAllEvent();
+        return ResponseEntity.ok().body(event);
+    }
+
+    @GetMapping("/showEventByEmployee")
+    public ResponseEntity<List<EventEntity>> GetAllEventByEmployee(@RequestBody int employeeId) {
+        List<EventEntity> event = eventService.getByEmployee(employeeId);
+        return ResponseEntity.ok().body(event);
+    }
+
+    @PostMapping("/addEvent")
+    public ResponseEntity<String> addEvent(@RequestBody EventDTO eventDTO) {
+        return ResponseEntity.ok(eventService.createEvent(eventDTO));
+    }
+
+    @PostMapping("/updateEvent")
+    public ResponseEntity<String> updateEmployee(@RequestBody EventDTO eventDTO){
+        return ResponseEntity.ok(eventService.updateEvent(eventDTO));
+    }
+    @DeleteMapping("/deleteEvent")
+    public ResponseEntity<String> deleteEvent(@RequestParam int eventId){
+        return ResponseEntity.ok(eventService.deleteEvent(eventId));
+    }
 }

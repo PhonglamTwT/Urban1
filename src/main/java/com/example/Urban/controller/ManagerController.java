@@ -1,7 +1,6 @@
 package com.example.Urban.controller;
 
 import com.example.Urban.dto.EmployeeDTO;
-import com.example.Urban.dto.ReqRes;
 import com.example.Urban.dto.EmployeeAccountDTO;
 import com.example.Urban.service.EmployeeService;
 import com.example.Urban.service.FileStorageService;

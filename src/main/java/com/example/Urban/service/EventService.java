@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface EventService {
     public List<EventEntity> getAllEvent();
-    //public List<EventDTO> getByEmployee(int id);
+    public List<EventEntity> getByEmployee(int id);
 
-//    public ReqRes updateEvent(EventDTO eventDTO);
-//    public ReqRes deleteEvent(int employeeId);
-//    public ReqRes createEvent(EventDTO eventDTO);
+    public String updateEvent(EventDTO eventDTO);
+    public String deleteEvent(int employeeId);
+    public String createEvent(EventDTO eventDTO);
 }
