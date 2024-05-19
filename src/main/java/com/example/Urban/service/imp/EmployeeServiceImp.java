@@ -4,10 +4,12 @@ import com.example.Urban.controller.ManagerController;
 import com.example.Urban.dto.AccountDTO;
 import com.example.Urban.dto.EmployeeAccountDTO;
 import com.example.Urban.dto.EmployeeDTO;
+import com.example.Urban.dto.ReqRes;
 import com.example.Urban.entity.AccountEntity;
 import com.example.Urban.entity.EmployeeEntity;
 import com.example.Urban.repository.AccountRepository;
 import com.example.Urban.repository.EmployeeRepository;
+import com.example.Urban.repository.EventRepository;
 import com.example.Urban.service.EmployeeMapper;
 import com.example.Urban.service.EmployeeNotFoundException;
 import com.example.Urban.service.EmployeeService;
@@ -18,14 +20,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class EmployeeServiceImp implements EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
-
+    @Autowired
+    private EventRepository eventRepository;
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
@@ -53,7 +56,50 @@ public class EmployeeServiceImp implements EmployeeService {
         });
         return employeeDTOs;
     }
+    @Override
+    public EmployeeDTO getEmployee(String name,String headquarter,String position,Date day)
+    {
+        Optional<EmployeeEntity> employeeOptional = employeeRepository.searchEmployee(name, headquarter, position, day);
+        if (employeeOptional.isPresent()) {
+            EmployeeEntity employee = employeeOptional.get();
+            int userId = employeeRepository.findByname(name);
+            EmployeeDTO dto = new EmployeeDTO();
+            dto.setName(employee.getName());
+            dto.setEmail(employee.getEmail());
+            dto.setPhone(employee.getPhone());
+            dto.setPosition(employee.getPosition());
+            dto.setHeadquarter(employee.getHeadquarter());
+            dto.setStatus(eventRepository.existsByEmployeeIdAndDay(userId,day));
+            return dto;
+        }else{
+            return null;
+        }
+    }
 
+    @Override
+    public List<EmployeeDTO> getByDay (Date day)
+    {
+        List<EmployeeEntity> employees = employeeRepository.getByDay(day);
+        if(!employees.isEmpty()){
+            List<EmployeeDTO> dtos = new ArrayList<>(employees.size());
+            for(EmployeeEntity employee : employees){
+                int userId = employeeRepository.findByname(employee.getName());
+                EmployeeDTO dto = new EmployeeDTO();
+
+                dto.setName(employee.getName());
+                dto.setName(employee.getName());
+                dto.setEmail(employee.getEmail());
+                dto.setPhone(employee.getPhone());
+                dto.setPosition(employee.getPosition());
+                dto.setHeadquarter(employee.getHeadquarter());
+                dto.setStatus(eventRepository.existsByEmployeeIdAndDay(userId, day));
+
+                dtos.add(dto);
+            }
+            return dtos;
+        }
+        return Collections.emptyList();
+    }
     @Override
     public List<AccountDTO> getAllAccount() {
         List<AccountEntity> account= accountRepository.findAll();

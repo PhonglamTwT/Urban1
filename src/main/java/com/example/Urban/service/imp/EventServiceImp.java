@@ -4,6 +4,7 @@ import com.example.Urban.dto.EventDTO;
 import com.example.Urban.entity.AccountEntity;
 import com.example.Urban.entity.EmployeeEntity;
 import com.example.Urban.entity.EventEntity;
+import com.example.Urban.repository.EmployeeRepository;
 import com.example.Urban.repository.EventRepository;
 import com.example.Urban.service.EventService;
 import jakarta.transaction.Transactional;
@@ -17,10 +18,50 @@ import java.util.Optional;
 public class EventServiceImp implements EventService {
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @Override
     public List<EventEntity> getAllEvent() {
         return List.of();
+    }
+
+    @Transactional
+    public ReqRes createEvent(EventDTO eventDTO){
+//        EventEntity event = new EventEntity();
+//        event.setId(eventDTO.getId());
+//        event.setName(eventDTO.getName());
+//        event.setWorktime(eventDTO.getWorktime());
+//        event.setWorkplace(eventDTO.getWorkplace());
+//        event.setDay(eventDTO.getDay());
+//        event.setStatus(eventDTO.getStatus());
+//        eventRepository.save(event);
+//        return event;
+        ReqRes resp = new ReqRes();
+        try {
+            Optional<EmployeeEntity> employee = employeeRepository.findById(eventDTO.getEmployee_id());
+
+            if(employee.isPresent()){
+                EventEntity event = new EventEntity();
+                event.setName(eventDTO.getName());
+                event.setWorktime(eventDTO.getWorktime());
+                event.setWorkplace(eventDTO.getWorkplace());
+                event.setDay(eventDTO.getDay());
+                event.setStatus(eventDTO.getStatus());
+                event.setEmployee(employee.get());
+
+                eventRepository.save(event);
+                resp.setMessage("Event add successfully");
+                resp.setStatusCode(200);
+            }
+            resp.setMessage("User not found");
+            resp.setStatusCode(404);
+
+        }catch (Exception e){
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
     }
 
 //    @Override
@@ -85,25 +126,5 @@ public class EventServiceImp implements EventService {
 //        }
 //        return reqRes;
 //    }
-//    @Transactional
-//    public ReqRes createEvent(EventDTO eventDTO){
-//        ReqRes resp = new ReqRes();
-//        try {
-//            EventEntity event = new EventEntity();
-//            event.setId(eventDTO.getId());
-//            event.setName(eventDTO.getName());
-//            event.setWorktime(eventDTO.getWorktime());
-//            event.setWorkplace(eventDTO.getWorkplace());
-//            event.setDay(eventDTO.getDay());
-//            event.setStatus(eventDTO.getStatus());
-//            eventRepository.save(event);
-//
-//            resp.setMessage("User Saved Successfully");
-//            resp.setStatusCode(200);
-//        }catch (Exception e){
-//            resp.setStatusCode(500);
-//            resp.setError(e.getMessage());
-//        }
-//        return resp;
-//    }
+
 }

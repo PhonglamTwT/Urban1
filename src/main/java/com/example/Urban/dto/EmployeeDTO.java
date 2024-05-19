@@ -1,5 +1,4 @@
 package com.example.Urban.dto;
-
 import com.example.Urban.entity.AccountEntity;
 import lombok.Data;
 
