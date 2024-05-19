@@ -103,7 +103,7 @@ public class EmployeeServiceImp implements EmployeeService {
             employeeRepository.delete(employee);
             return "Employee deleted successfully";
         } else {
-            throw new RuntimeException("Employee not found with id: " + employeeId);
+            throw new RuntimeException("Employee deleted failed");
         }
 
     }

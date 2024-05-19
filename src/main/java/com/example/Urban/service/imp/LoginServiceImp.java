@@ -1,17 +1,14 @@
 package com.example.Urban.service.imp;
 
-import com.example.Urban.controller.ManagerController;
 import com.example.Urban.dto.AccountDTO;
 import com.example.Urban.repository.AccountRepository;
 import com.example.Urban.service.JWTUtils;
 import com.example.Urban.service.LoginService;
 import com.example.Urban.service.TokenCacheService;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.util.HashMap;
 
@@ -25,8 +22,6 @@ public class LoginServiceImp implements LoginService {
     private AccountRepository accountRepository;
     @Autowired
     private TokenCacheService tokenCacheService;
-
-
 
     @Override
     public String loginJwt(AccountDTO loginRequest) {
