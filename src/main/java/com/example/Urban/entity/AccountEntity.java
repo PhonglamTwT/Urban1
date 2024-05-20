@@ -30,6 +30,10 @@ public class AccountEntity implements UserDetails {
     @JoinColumn(name = "employee_id")
     private EmployeeEntity employee;
 
+    @OneToOne
+    @JoinColumn(name = "forgotpassword_id")
+    private ForgotPasswordEntity forgotPassword;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));

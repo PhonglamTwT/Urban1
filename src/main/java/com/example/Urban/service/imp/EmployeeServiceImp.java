@@ -214,6 +214,28 @@ public class EmployeeServiceImp implements EmployeeService {
         throw new RuntimeException("Can't create Employee " );
     }
 
+    @Override
+    public EmployeeEntity checkEmail(String email) {
+        Optional<EmployeeEntity> employee = employeeRepository.findByEmail(email);
+        if(employee.isPresent()){
+            return employee.get();
+        }
+        throw new RuntimeException("Email not found");
+    }
+
+    @Override
+    public String changePassword(String email, String password) {
+        try{
+            EmployeeEntity employee = employeeRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("Employee with that email doesn't exist"));
+            AccountEntity account = employee.getAccount();
+            account.setPassword(passwordEncoder.encode(password));
+            accountRepository.save(account);
+            return "Change password success";
+        }catch (Exception e){
+            throw new RuntimeException("Change password fail"+e.getLocalizedMessage());
+        }
+    }
+
     private void updateEmployeeDetails(EmployeeEntity employee, String image, String name, String email, String phone, String gender, String address, String position, String headquarter) {
         employee.setImage(image);
         employee.setName(name);
@@ -254,5 +276,6 @@ public class EmployeeServiceImp implements EmployeeService {
         fileStorageService.save(file);
         return sanitizedFilename;
     }
+
 
 }

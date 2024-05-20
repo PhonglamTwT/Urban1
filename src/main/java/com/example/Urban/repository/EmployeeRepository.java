@@ -23,4 +23,6 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Intege
 
     @Query(value="SELECT e.id FROM EmployeeEntity e WHERE e.name = :name LIMIT 1",nativeQuery = true)
     int findByname (@Param("name")String name);
+
+    Optional<EmployeeEntity> findByEmail(String email);
 }

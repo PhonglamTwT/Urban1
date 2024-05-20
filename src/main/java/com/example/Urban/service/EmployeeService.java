@@ -25,4 +25,8 @@ public interface EmployeeService {
     String deleteEmployeeJwt(int employeeId);
 
     String createEmployeeAndAccountJwt(MultipartFile file, EmployeeAccountDTO createaccountRequest);
+
+    EmployeeEntity checkEmail(String email);
+
+    String changePassword(String email, String password);
 }

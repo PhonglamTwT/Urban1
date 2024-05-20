@@ -1,9 +1,16 @@
 package com.example.Urban.controller;
 
+import com.example.Urban.dto.ChangePassword;
 import com.example.Urban.dto.EmployeeDTO;
 import com.example.Urban.dto.EmployeeAccountDTO;
+import com.example.Urban.dto.MailBody;
+import com.example.Urban.entity.EmployeeEntity;
+import com.example.Urban.entity.ForgotPasswordEntity;
+import com.example.Urban.repository.ForgotPasswordRepository;
+import com.example.Urban.service.EmailService;
 import com.example.Urban.service.EmployeeService;
 import com.example.Urban.service.FileStorageService;
+import com.example.Urban.service.ForgotPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,19 +20,25 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 
 @CrossOrigin
 @RestController
-@RequestMapping("/manager")
+@RequestMapping("/employee")
 public class ManagerController {
     @Autowired
     private EmployeeService EmployeeService;
-
+    @Autowired
+    private ForgotPasswordService forgotPasswordService;
+    @Autowired
+    private EmailService emailService;
 //--------------------------------------------------------------------------------------------------
 
     @PostMapping("/addEmploy")
@@ -80,4 +93,54 @@ public class ManagerController {
         return ResponseEntity.ok(EmployeeService.getByDay(day));
     }
 
+    @PostMapping("/verifyEmail")
+    public ResponseEntity<String> verifyEmail(@RequestParam String email){
+        System.out.printf("Email: "+email);
+        EmployeeEntity employee = EmployeeService.checkEmail(email);
+        int otp = otpGenerator();
+        MailBody mailBody = new MailBody();
+        mailBody.setTo(email);
+        mailBody.setText("Your OTP for reset password " + otp);
+        mailBody.setSubject("OTP");
+        ForgotPasswordEntity fp = new ForgotPasswordEntity();
+        fp.setOtp(otp);
+        fp.setExpirationTime(generateExpirationTime(5));
+        fp.setAccount(employee.getAccount());
+        emailService.sendSimpleMessage(mailBody);
+        forgotPasswordService.saveOTP(fp);
+        return ResponseEntity.ok("Email send successfully");
+    }
+
+    private Date generateExpirationTime(int minutes){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, minutes); // Ví dụ: OTP sẽ hết hạn sau 15 phút
+        return calendar.getTime();
+    }
+
+    @PostMapping("/verifyOTP")
+    public ResponseEntity<String> verifyOTP(@RequestParam int otp, @RequestParam String email){
+        EmployeeEntity employee = EmployeeService.checkEmail(email);
+        ForgotPasswordEntity fp = forgotPasswordService.findOtpByAccount(employee.getAccount());
+        if(fp.getExpirationTime().before(Date.from(Instant.now()))){
+            forgotPasswordService.deleteOTP(fp);
+            return new ResponseEntity<>("OTP expired",HttpStatus.EXPECTATION_FAILED);
+        } else if (fp.getOtp()==otp) {
+            return new ResponseEntity<>("OTP verified",HttpStatus.OK);
+        }
+        return new ResponseEntity<>("OTP verified fail",HttpStatus.EXPECTATION_FAILED);
+    }
+
+    private Integer otpGenerator(){
+        Random random = new Random();
+        return random.nextInt(100_000, 999_999);
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@ModelAttribute ChangePassword changePassword, @RequestParam String email){
+        if(!Objects.equals(changePassword.getChangePassword(), changePassword.getRepeatPassword())){
+            return new ResponseEntity<>("Password not equal",HttpStatus.EXPECTATION_FAILED);
+        }
+        String result = EmployeeService.changePassword(email,changePassword.getChangePassword());
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }
