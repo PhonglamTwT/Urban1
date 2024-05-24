@@ -28,6 +28,9 @@ public class EventEntity {
     @Column(name="status")
     private String status;
 
+    @Column(name="note")
+    private String note;
+
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name="employee_id")

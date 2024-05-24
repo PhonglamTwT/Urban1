@@ -13,4 +13,5 @@ public class EventDTO {
     private String worktime;
     private String workplace;
     private String status;
+    private String note;
 }
