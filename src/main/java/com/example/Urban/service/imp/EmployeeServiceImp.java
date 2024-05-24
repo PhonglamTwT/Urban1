@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -36,6 +37,30 @@ public class EmployeeServiceImp implements EmployeeService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmployeeMapper employeeMapper;
+
+
+
+    @Override
+    public EmployeeDTO getOneEmployeeJwt(int employeeId) {
+        EmployeeEntity employees = employeeRepository.findById(employeeId).orElseThrow(()->new RuntimeException("Cant find employee"));
+
+        EmployeeDTO employeeDTO = employeeMapper.toEmployeeDTO(employees);
+
+        // Thiết lập URL hình ảnh cho mỗi nhân viên nếu có
+
+            String filename = employeeDTO.getImage(); // Giả sử trường image là tên file lưu trữ
+            if (filename != null && !filename.isEmpty()) {
+                String imageUrl = MvcUriComponentsBuilder
+                        .fromMethodName(ManagerController.class, "getFile", filename)
+                        .build()
+                        .toString();
+                employeeDTO.setImage(imageUrl);
+            }
+
+
+
+        return employeeDTO;
+    }
 
     @Override
     public List<EmployeeDTO> getAllEmployeeJwt() {
@@ -76,19 +101,23 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> getByDay (Date day)
+    public List<EmployeeDTO> getByDay (LocalDate day)
     {
+//        System.out.printf("day: " + day);
         List<EmployeeEntity> employees = employeeRepository.getByDay(day);
+//        System.out.printf("em: " + employees);
         if(!employees.isEmpty()){
             List<EmployeeDTO> dtos = new ArrayList<>(employees.size());
             for(EmployeeEntity employee : employees){
-                int userId = employeeRepository.findByname(employee.getName());
+//                int userId = employeeRepository.findByname(employee.getName());
                 EmployeeDTO dto = new EmployeeDTO();
 
-                dto.setName(employee.getName());
+                dto.setImage(employee.getImage());
                 dto.setName(employee.getName());
                 dto.setEmail(employee.getEmail());
                 dto.setPhone(employee.getPhone());
+                dto.setGender(employee.getGender());
+                dto.setAddress(employee.getAddress());
                 dto.setPosition(employee.getPosition());
                 dto.setHeadquarter(employee.getHeadquarter());
 //                dto.setStatus(eventRepository.existsByEmployeeIdAndDay(userId, day));

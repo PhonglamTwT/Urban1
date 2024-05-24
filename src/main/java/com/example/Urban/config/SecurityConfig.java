@@ -34,6 +34,7 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request-> request.requestMatchers("/auth/**", "/public/**").permitAll()
+                        .requestMatchers("/auth/**", "/public/**", "/employee/files/**").permitAll() // Cho phép truy cập công khai vào các tệp trong /employee/files/**
                         .requestMatchers("/manager/**").hasAnyAuthority("admin")
                         .requestMatchers("/nhanvien/**").hasAnyAuthority("user")
                         .requestMatchers("/adminnhanvien/**").hasAnyAuthority("admin", "user")

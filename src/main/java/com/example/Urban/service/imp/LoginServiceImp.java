@@ -39,9 +39,12 @@ public class LoginServiceImp implements LoginService {
                     .orElseThrow(() -> new RuntimeException("User not found"));
             String jwt = jwtUtils.generateToken(loginUser);
             tokenCacheService.saveJwtToCache(loginRequest, jwt);
-            loginDTO.setToken(jwt);
             loginDTO.setMessage("Successfully Logged In");
+
+            loginDTO.setToken(jwt);
             loginDTO.setEmployeeId(loginUser.getEmployee().getId());
+            loginDTO.setRole(loginUser.getRole());
+
             return loginDTO;
         } catch (Exception e) {
             throw new RuntimeException("Employee not found with id: " + e);

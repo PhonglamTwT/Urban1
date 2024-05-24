@@ -4,6 +4,7 @@ import com.example.Urban.dto.ChangePassword;
 import com.example.Urban.dto.EmployeeDTO;
 import com.example.Urban.dto.EmployeeAccountDTO;
 import com.example.Urban.dto.MailBody;
+import com.example.Urban.entity.AccountEntity;
 import com.example.Urban.entity.EmployeeEntity;
 import com.example.Urban.entity.ForgotPasswordEntity;
 import com.example.Urban.repository.ForgotPasswordRepository;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -49,6 +51,12 @@ public class ManagerController {
     @GetMapping("/showEmploy")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployeeJwt(){
         List<EmployeeDTO> employees = EmployeeService.getAllEmployeeJwt();
+        return new ResponseEntity<>(employees, HttpStatus.OK);
+    }
+
+    @PostMapping("/showOneEmploy")
+    public ResponseEntity<EmployeeDTO> getOneEmployeeJwtById(@RequestParam int employeeId){
+        EmployeeDTO employees = EmployeeService.getOneEmployeeJwt(employeeId);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
@@ -89,7 +97,7 @@ public class ManagerController {
         return ResponseEntity.ok(EmployeeService.getEmployee(params.get("name"),params.get("headquarter"),params.get("position"),day));
     }
     @GetMapping("/getByDate")
-    public ResponseEntity<List<EmployeeDTO>> getByDate(@RequestParam @DateTimeFormat(pattern="yyyy-MM-dd")  Date day){
+    public ResponseEntity<List<EmployeeDTO>> getByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate day) {
         return ResponseEntity.ok(EmployeeService.getByDay(day));
     }
 
@@ -105,6 +113,11 @@ public class ManagerController {
         ForgotPasswordEntity fp = new ForgotPasswordEntity();
         fp.setOtp(otp);
         fp.setExpirationTime(generateExpirationTime(5));
+        AccountEntity account = employee.getAccount();
+        ForgotPasswordEntity databaseOTP = account.getForgotPassword();
+        if(account.getForgotPassword()!=null){
+            forgotPasswordService.deleteOTP(databaseOTP);
+        }
         fp.setAccount(employee.getAccount());
         emailService.sendSimpleMessage(mailBody);
         forgotPasswordService.saveOTP(fp);
