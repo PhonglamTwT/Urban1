@@ -7,6 +7,8 @@ import com.example.Urban.service.ForgotPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ForgotPasswordServiceImp implements ForgotPasswordService {
     @Autowired
@@ -25,8 +27,11 @@ public class ForgotPasswordServiceImp implements ForgotPasswordService {
 
     @Override
     public ForgotPasswordEntity findOtpByAccount(AccountEntity account) {
-        ForgotPasswordEntity fp = forgotPasswordRepository.findByAccount(account).orElseThrow(()-> new RuntimeException("OTP not found by the Account"));
-        return fp;
+        Optional<ForgotPasswordEntity> fp = forgotPasswordRepository.findByAccount(account);
+        if(fp.isPresent()){
+            return fp.get();
+        }
+        return null;
     }
 
     @Override

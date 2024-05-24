@@ -105,6 +105,11 @@ public class ManagerController {
     public ResponseEntity<String> verifyEmail(@RequestParam String email){
         System.out.printf("Email: "+email);
         EmployeeEntity employee = EmployeeService.checkEmail(email);
+        ForgotPasswordEntity checkOTPExist = forgotPasswordService.findOtpByAccount(employee.getAccount());
+        if(checkOTPExist!=null){
+            System.out.println("Da xoa OTP");
+            forgotPasswordService.deleteOTP(checkOTPExist);
+        }
         int otp = otpGenerator();
         MailBody mailBody = new MailBody();
         mailBody.setTo(email);
@@ -113,11 +118,6 @@ public class ManagerController {
         ForgotPasswordEntity fp = new ForgotPasswordEntity();
         fp.setOtp(otp);
         fp.setExpirationTime(generateExpirationTime(5));
-        AccountEntity account = employee.getAccount();
-        ForgotPasswordEntity databaseOTP = account.getForgotPassword();
-        if(account.getForgotPassword()!=null){
-            forgotPasswordService.deleteOTP(databaseOTP);
-        }
         fp.setAccount(employee.getAccount());
         emailService.sendSimpleMessage(mailBody);
         forgotPasswordService.saveOTP(fp);

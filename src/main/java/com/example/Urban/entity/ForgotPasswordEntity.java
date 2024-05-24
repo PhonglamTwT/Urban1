@@ -20,5 +20,6 @@ public class ForgotPasswordEntity {
     private Date expirationTime;
 
     @OneToOne
+    @JoinColumn(name = "account_id")
     private AccountEntity account;
 }

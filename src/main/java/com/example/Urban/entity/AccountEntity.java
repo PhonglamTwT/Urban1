@@ -30,8 +30,7 @@ public class AccountEntity implements UserDetails {
     @JoinColumn(name = "employee_id")
     private EmployeeEntity employee;
 
-    @OneToOne
-    @JoinColumn(name = "forgotpassword_id")
+    @OneToOne(mappedBy = "account")
     private ForgotPasswordEntity forgotPassword;
 
     @Override
