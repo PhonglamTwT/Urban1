@@ -8,5 +8,6 @@ import javax.print.DocFlavor;
 public class LoginDTO {
     private String token;
     private String message;
+    private String role;
     private int employeeId;
 }

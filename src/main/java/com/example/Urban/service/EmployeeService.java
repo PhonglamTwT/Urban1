@@ -7,15 +7,18 @@ import com.example.Urban.dto.EmployeeAccountDTO;
 import com.example.Urban.dto.EmployeeDTO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 public interface EmployeeService {
 
+    public EmployeeDTO getOneEmployeeJwt(int employeeId);
+
     List<EmployeeDTO> getAllEmployeeJwt();
 
     EmployeeDTO getEmployee(String name, String headquarter, String position, Date day);
-    List<EmployeeDTO> getByDay (Date day);
+    List<EmployeeDTO> getByDay (LocalDate day);
 
     List<AccountDTO> getAllAccount();
 

@@ -4,6 +4,7 @@ import com.example.Urban.dto.ChangePassword;
 import com.example.Urban.dto.EmployeeDTO;
 import com.example.Urban.dto.EmployeeAccountDTO;
 import com.example.Urban.dto.MailBody;
+import com.example.Urban.entity.AccountEntity;
 import com.example.Urban.entity.EmployeeEntity;
 import com.example.Urban.entity.ForgotPasswordEntity;
 import com.example.Urban.repository.ForgotPasswordRepository;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -49,6 +51,12 @@ public class ManagerController {
     @GetMapping("/showEmploy")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployeeJwt(){
         List<EmployeeDTO> employees = EmployeeService.getAllEmployeeJwt();
+        return new ResponseEntity<>(employees, HttpStatus.OK);
+    }
+
+    @PostMapping("/showOneEmploy")
+    public ResponseEntity<EmployeeDTO> getOneEmployeeJwtById(@RequestParam int employeeId){
+        EmployeeDTO employees = EmployeeService.getOneEmployeeJwt(employeeId);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
@@ -99,6 +107,11 @@ public class ManagerController {
     public ResponseEntity<String> verifyEmail(@RequestParam String email){
         System.out.printf("Email: "+email);
         EmployeeEntity employee = EmployeeService.checkEmail(email);
+        ForgotPasswordEntity checkOTPExist = forgotPasswordService.findOtpByAccount(employee.getAccount());
+        if(checkOTPExist!=null){
+            System.out.println("Da xoa OTP");
+            forgotPasswordService.deleteOTP(checkOTPExist);
+        }
         int otp = otpGenerator();
         MailBody mailBody = new MailBody();
         mailBody.setTo(email);

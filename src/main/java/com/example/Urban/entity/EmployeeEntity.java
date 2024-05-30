@@ -13,41 +13,40 @@ import java.util.List;
 public class EmployeeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    private int id;
 
-    @Column(name="image")
-    String image;
+    @Column(name = "image")
+    private String image;
 
-    @Column(name="name")
-    String name;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name="email")
-    String email;
+    @Column(name = "email")
+    private String email;
 
-    @Column(name="phone")
-    String phone;
+    @Column(name = "phone")
+    private String phone;
 
-    @Column(name="gender")
-    String gender;
+    @Column(name = "gender")
+    private String gender;
 
-    @Column(name="address")
-    String address;
+    @Column(name = "address")
+    private String address;
 
-    @Column(name="position")
-    String position;
+    @Column(name = "position")
+    private String position;
 
-    @Column(name="headquarter")
-    String headquarter;
+    @Column(name = "headquarter")
+    private String headquarter;
 
     @JsonIgnore
     @ToString.Exclude
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<EventEntity> events;
 
     @JsonIgnore
     @ToString.Exclude
-    @OneToOne(mappedBy = "employee")
+    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private AccountEntity account;
-    
 
 }
