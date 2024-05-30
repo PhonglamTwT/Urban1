@@ -20,13 +20,13 @@ public class EventController {
     @GetMapping("/showEvent")
     public ResponseEntity<List<EventEntity>> GetAllEvent() {
         List<EventEntity> event = eventService.getAllEvent();
-        return ResponseEntity.ok().body(event);
+        return new ResponseEntity<>(event , HttpStatus.OK);
     }
 
     @GetMapping("/showEventByEmployee")
     public ResponseEntity<List<EventEntity>> GetAllEventByEmployee(@RequestBody int employeeId) {
         List<EventEntity> event = eventService.getByEmployee(employeeId);
-        return ResponseEntity.ok().body(event);
+        return new ResponseEntity<>(event , HttpStatus.OK);
     }
 
     @PostMapping("/addEvent")

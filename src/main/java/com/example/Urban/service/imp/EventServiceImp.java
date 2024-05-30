@@ -35,7 +35,7 @@ public class EventServiceImp implements EventService {
                 event.setDay(eventDTO.getDay());
                 event.setStatus(eventDTO.getStatus());
                 event.setEmployee(employee.get());
-
+                event.setNote(eventDTO.getNote());
                 eventRepository.save(event);
                 return "Event create successfully";
             }

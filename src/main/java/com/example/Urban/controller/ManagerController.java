@@ -94,11 +94,13 @@ public class ManagerController {
     @GetMapping("/searchEmployee")
     public ResponseEntity<EmployeeDTO> searchEmployee(@RequestParam Map<String,String> params,
                                                       @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd")  Date day){
-        return ResponseEntity.ok(EmployeeService.getEmployee(params.get("name"),params.get("headquarter"),params.get("position"),day));
+        EmployeeDTO employeeDTO = EmployeeService.getEmployee(params.get("name"),params.get("headquarter"),params.get("position"),day);
+        return new ResponseEntity<>(employeeDTO, HttpStatus.OK);
     }
     @GetMapping("/getByDate")
-    public ResponseEntity<List<EmployeeDTO>> getByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate day) {
-        return ResponseEntity.ok(EmployeeService.getByDay(day));
+    public ResponseEntity<List<EmployeeDTO>> getByDate(@RequestParam @DateTimeFormat(pattern="yyyy-MM-dd")  Date day){
+        List<EmployeeDTO> employeeDTOS = EmployeeService.getByDay(day);
+        return new ResponseEntity<>(employeeDTOS, HttpStatus.OK);
     }
 
     @PostMapping("/verifyEmail")
