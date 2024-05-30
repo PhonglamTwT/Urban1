@@ -44,7 +44,7 @@ public class ManagerController {
 //--------------------------------------------------------------------------------------------------
 
     @PostMapping("/addEmploy")
-    public ResponseEntity<String> addEmployeeAndAccountJwt(@RequestParam("file") MultipartFile file, @ModelAttribute EmployeeAccountDTO empAcc){
+    public ResponseEntity<String> addEmployeeAndAccountJwt(@RequestParam(value = "file", required = false)MultipartFile file, @ModelAttribute EmployeeAccountDTO empAcc){
         String result = EmployeeService.createEmployeeAndAccountJwt(file,empAcc);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -83,11 +83,10 @@ public class ManagerController {
     }
 
     @PutMapping("/updateEmployee")
-    public ResponseEntity<EmployeeAccountDTO> updateEmployeeJwt(@RequestParam int employeeId , @RequestParam MultipartFile file, @RequestParam String name,
+    public ResponseEntity<EmployeeAccountDTO> updateEmployeeJwt(@RequestParam int employeeId , @RequestParam(required = false) MultipartFile file, @RequestParam String name,
                                                     @RequestParam String email, @RequestParam String phone, @RequestParam String gender,
-                                                    @RequestParam String address, @RequestParam String position, @RequestParam String headquarter,
-                                                    @RequestParam String username, @RequestParam String password, @RequestParam String role){
-        EmployeeAccountDTO employeeAccountDTO = EmployeeService.updateEmployeeJwt(employeeId, file, name, email, phone, gender, address, position, headquarter, username, password, role );
+                                                    @RequestParam String address, @RequestParam String position, @RequestParam String headquarter){
+        EmployeeAccountDTO employeeAccountDTO = EmployeeService.updateEmployeeJwt(employeeId, file, name, email, phone, gender, address, position, headquarter);
         return new ResponseEntity<>(employeeAccountDTO, HttpStatus.OK);
     }
 

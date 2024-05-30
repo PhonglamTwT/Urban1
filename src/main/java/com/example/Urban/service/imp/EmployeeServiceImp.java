@@ -65,7 +65,10 @@ public class EmployeeServiceImp implements EmployeeService {
     @Override
     public List<EmployeeDTO> getAllEmployeeJwt() {
         List<EmployeeEntity> employees = employeeRepository.findAll();
+        employees.forEach(employee -> System.out.println("Employee ID: " + employee.getId()));
+
         List<EmployeeDTO> employeeDTOs = employeeMapper.toEmployeeDTOs(employees);
+        employeeDTOs.forEach(dto -> System.out.println("DTO ID: " + dto.getId()));
 
         // Thiết lập URL hình ảnh cho mỗi nhân viên nếu có
         employeeDTOs.forEach(employeeDTO -> {
@@ -86,14 +89,13 @@ public class EmployeeServiceImp implements EmployeeService {
         Optional<EmployeeEntity> employeeOptional = employeeRepository.searchEmployee(name, headquarter, position, day);
         if (employeeOptional.isPresent()) {
             EmployeeEntity employee = employeeOptional.get();
-            int userId = employeeRepository.findByname(name);
             EmployeeDTO dto = new EmployeeDTO();
             dto.setName(employee.getName());
             dto.setEmail(employee.getEmail());
             dto.setPhone(employee.getPhone());
             dto.setPosition(employee.getPosition());
             dto.setHeadquarter(employee.getHeadquarter());
-//            dto.setStatus(eventRepository.existsByEmployeeIdAndDay(userId,day));
+
             return dto;
         }else{
             return null;
@@ -112,7 +114,26 @@ public class EmployeeServiceImp implements EmployeeService {
 //                int userId = employeeRepository.findByname(employee.getName());
                 EmployeeDTO dto = new EmployeeDTO();
 
-                dto.setImage(employee.getImage());
+                dto.setId(employee.getId());
+
+
+
+
+                // Thiết lập URL hình ảnh cho mỗi nhân viên nếu có
+
+                    String filename = employee.getImage(); // Giả sử trường image là tên file lưu trữ
+                    if (filename != null && !filename.isEmpty()) {
+                        String imageUrl = MvcUriComponentsBuilder
+                                .fromMethodName(ManagerController.class, "getFile", filename)
+                                .build()
+                                .toString();
+                        dto.setImage(imageUrl);
+                    }
+
+//                dto.setImage(employee.getImage());
+
+
+
                 dto.setName(employee.getName());
                 dto.setEmail(employee.getEmail());
                 dto.setPhone(employee.getPhone());
@@ -137,25 +158,30 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public EmployeeAccountDTO updateEmployeeJwt(int employeeId, MultipartFile file, String name, String email, String phone, String gender, String address, String position, String headquarter, String username, String password, String role) {
-        AccountEntity account = accountRepository.findByEmployeeId(employeeId);
-        if(!account.getUsername().equals(username) && accountRepository.findByUsername(username).isPresent()){
-            throw new RuntimeException("Username exist");
-        }
-        String sanitizedFilename = saveFile(file);
+    public EmployeeAccountDTO updateEmployeeJwt(int employeeId, MultipartFile file, String name, String email, String phone, String gender, String address, String position, String headquarter) {
+
+        String sanitizedFilename = "";
+
+//        String sanitizedFilename = saveFile(file);
         Optional<EmployeeEntity> empOptional = employeeRepository.findById(employeeId);
 
         if (empOptional.isPresent()) {
             EmployeeEntity employee = empOptional.get();
-
-            if (!employee.getImage().equals(file.getOriginalFilename())) {
-                fileStorageService.deleleEmployeePhoto(employee.getImage());
+            if(file.isEmpty()){
+                sanitizedFilename = employee.getImage();
+            }
+            else{
+                if (!employee.getImage().equals(file.getOriginalFilename())) {
+                    fileStorageService.deleleEmployeePhoto(employee.getImage());
+                    sanitizedFilename = saveFile(file);
+                }else{
+                    sanitizedFilename = employee.getImage();
+                }
             }
 
             updateEmployeeDetails(employee, sanitizedFilename, name, email, phone, gender, address, position, headquarter);
 
             AccountEntity existingAccount = employee.getAccount();
-            updateAccountDetails(existingAccount, username, password, role);
 
             employeeRepository.save(employee);
             accountRepository.save(existingAccount);
@@ -266,6 +292,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     private void updateEmployeeDetails(EmployeeEntity employee, String image, String name, String email, String phone, String gender, String address, String position, String headquarter) {
+//        employee.setId(employee.getId());
         employee.setImage(image);
         employee.setName(name);
         employee.setEmail(email);
@@ -275,13 +302,7 @@ public class EmployeeServiceImp implements EmployeeService {
         employee.setPosition(position);
         employee.setHeadquarter(headquarter);
     }
-    private void updateAccountDetails(AccountEntity account, String username, String password, String role) {
-        account.setUsername(username);
-        account.setRole(role);
-        if (password != null && !password.isEmpty()) {
-            account.setPassword(passwordEncoder.encode(password));
-        }
-    }
+
     private EmployeeAccountDTO createEmployeeAccountDTO(EmployeeEntity employee, AccountEntity account) {
         EmployeeAccountDTO dto = new EmployeeAccountDTO();
         dto.setImage(employee.getImage());

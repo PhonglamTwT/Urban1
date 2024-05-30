@@ -7,6 +7,7 @@ import java.util.List;
 @Data
 public class EmployeeDTO {
 
+    private int id;
     private String image;
     private String name;
     private String email;
