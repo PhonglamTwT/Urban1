@@ -12,11 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Integer > {
-    @Query(value = "SELECT e.name,e.email,e.phone,e.position,e.headquarter FROM EmployeeEntity e INNER JOIN EventEntity ev ON e.id = ev.employee_id WHERE (:name is null or e.name = :name ) OR ( :headquarter is null or e.headquarter = :headquarter ) OR ( :position is null or e.position = :position) AND e.day =:day LIMIT 1",nativeQuery = true)
-    Optional<EmployeeEntity> searchEmployee (@Param("name")String name,
-                                             @Param("headquarter")String headquarter,
-                                             @Param("position")String position,
-                                             @Param("day") Date day);
+
     @Query(value = "SELECT e.id, e.name, e.email, e.phone, e.position, e.headquarter,e.address, e.gender,e.image " +
             "FROM employee e " +
             "INNER JOIN event ev ON e.id = ev.employee_id " +

@@ -83,24 +83,7 @@ public class EmployeeServiceImp implements EmployeeService {
         });
         return employeeDTOs;
     }
-    @Override
-    public EmployeeDTO getEmployee(String name,String headquarter,String position,Date day)
-    {
-        Optional<EmployeeEntity> employeeOptional = employeeRepository.searchEmployee(name, headquarter, position, day);
-        if (employeeOptional.isPresent()) {
-            EmployeeEntity employee = employeeOptional.get();
-            EmployeeDTO dto = new EmployeeDTO();
-            dto.setName(employee.getName());
-            dto.setEmail(employee.getEmail());
-            dto.setPhone(employee.getPhone());
-            dto.setPosition(employee.getPosition());
-            dto.setHeadquarter(employee.getHeadquarter());
 
-            return dto;
-        }else{
-            return null;
-        }
-    }
 
     @Override
     public List<EmployeeDTO> getByDay (LocalDate day)

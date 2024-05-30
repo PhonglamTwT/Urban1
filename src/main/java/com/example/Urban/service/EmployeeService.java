@@ -17,7 +17,7 @@ public interface EmployeeService {
 
     List<EmployeeDTO> getAllEmployeeJwt();
 
-    EmployeeDTO getEmployee(String name, String headquarter, String position, Date day);
+
     List<EmployeeDTO> getByDay (LocalDate day);
 
     List<AccountDTO> getAllAccount();
