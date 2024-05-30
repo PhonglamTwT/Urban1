@@ -23,14 +23,14 @@ public class EventController {
         return ResponseEntity.ok().body(event);
     }
 
-    @GetMapping("/showEventByEmployee")
-    public ResponseEntity<List<EventEntity>> GetAllEventByEmployee(@RequestBody int employeeId) {
+    @PostMapping("/showEventByEmployee")
+    public ResponseEntity<List<EventEntity>> GetAllEventByEmployee(@RequestParam int employeeId) {
         List<EventEntity> event = eventService.getByEmployee(employeeId);
         return ResponseEntity.ok().body(event);
     }
 
     @PostMapping("/addEvent")
-    public ResponseEntity<String> addEvent(@RequestBody EventDTO eventDTO) {
+    public ResponseEntity<String> addEvent(@ModelAttribute EventDTO eventDTO) {
         return ResponseEntity.ok(eventService.createEvent(eventDTO));
     }
 

@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class EmployeeAccountDTO {
 
+    private int id;
     private String image;
     private String name;
     private String email;

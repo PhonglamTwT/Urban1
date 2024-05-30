@@ -23,7 +23,7 @@ public interface EmployeeService {
     List<AccountDTO> getAllAccount();
 
     EmployeeAccountDTO updateEmployeeJwt(int employeeId, MultipartFile file, String name, String email, String phone, String gender, String address,
-                                         String position, String headquarter, String username, String password, String role);
+                                         String position, String headquarter);
 
     String deleteEmployeeJwt(int employeeId);
 

@@ -16,7 +16,9 @@ public interface EmployeeMapper {
     EmployeeMapper INSTANCE = Mappers.getMapper(EmployeeMapper.class);
 
 //    @Mapping(source = "employee", target = "employeeDTO")
+
     EmployeeDTO toEmployeeDTO(EmployeeEntity employee);
+
 //    @Mapping(source = "account", target = "accountDTO")
     AccountDTO toAccountDTO(AccountEntity account);
 
