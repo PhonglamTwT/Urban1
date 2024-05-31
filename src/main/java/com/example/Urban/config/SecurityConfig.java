@@ -35,11 +35,13 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request-> request.requestMatchers("/auth/**", "/public/**").permitAll()
                         .requestMatchers("/auth/**", "/public/**", "/employee/files/**").permitAll() // Cho phép truy cập công khai vào các tệp trong /employee/files/**
-                        .requestMatchers("/employee/**").hasAnyAuthority("admin")
+                        .requestMatchers("/employee/verifyEmail").permitAll()
+                        .requestMatchers("/employee/verifyOTP").permitAll()
+                        .requestMatchers("/employee/changePassword").permitAll()
+
                         .requestMatchers("/employee/showOneEmploy").hasAnyAuthority("admin", "user")
-                        .requestMatchers("/employee/verifyEmail").hasAnyAuthority("admin", "user")
-                        .requestMatchers("/employee/verifyOTP").hasAnyAuthority("admin", "user")
-                        .requestMatchers("/employee/changePassword").hasAnyAuthority("admin", "user")
+                        .requestMatchers("/employee/**").hasAnyAuthority("admin")
+
                         .requestMatchers("/event/**").hasAnyAuthority("admin", "user")
 
                         .anyRequest().authenticated())

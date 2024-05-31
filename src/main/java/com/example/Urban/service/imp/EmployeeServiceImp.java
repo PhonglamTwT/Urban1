@@ -143,14 +143,15 @@ public class EmployeeServiceImp implements EmployeeService {
     @Override
     public EmployeeAccountDTO updateEmployeeJwt(int employeeId, MultipartFile file, String name, String email, String phone, String gender, String address, String position, String headquarter) {
 
+
         String sanitizedFilename = "";
 
 //        String sanitizedFilename = saveFile(file);
         Optional<EmployeeEntity> empOptional = employeeRepository.findById(employeeId);
-
         if (empOptional.isPresent()) {
             EmployeeEntity employee = empOptional.get();
-            if(file.isEmpty()){
+
+            if(file == null){
                 sanitizedFilename = employee.getImage();
             }
             else{
@@ -161,7 +162,11 @@ public class EmployeeServiceImp implements EmployeeService {
                     sanitizedFilename = employee.getImage();
                 }
             }
-
+            if(!employee.getEmail().equals(email)){
+                if(employeeRepository.findByEmail(email).isPresent()){
+                    throw new RuntimeException("Email exist");
+                }
+            }
             updateEmployeeDetails(employee, sanitizedFilename, name, email, phone, gender, address, position, headquarter);
 
             AccountEntity existingAccount = employee.getAccount();
@@ -221,6 +226,9 @@ public class EmployeeServiceImp implements EmployeeService {
     public String createEmployeeAndAccountJwt(MultipartFile file, EmployeeAccountDTO createAccountRequest) {
         if(accountRepository.findByUsername(createAccountRequest.getUsername()).isPresent()){
             throw new RuntimeException("Username exist");
+        }
+        if(employeeRepository.findByEmail(createAccountRequest.getEmail()).isPresent()){
+            throw new RuntimeException("Email exist");
         }
         String sanitizedFilename = saveFile(file);
         try {
