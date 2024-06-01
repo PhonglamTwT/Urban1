@@ -6,9 +6,11 @@ import com.example.Urban.dto.EmployeeAccountDTO;
 import com.example.Urban.dto.EmployeeDTO;
 import com.example.Urban.entity.AccountEntity;
 import com.example.Urban.entity.EmployeeEntity;
+import com.example.Urban.entity.ForgotPasswordEntity;
 import com.example.Urban.repository.AccountRepository;
 import com.example.Urban.repository.EmployeeRepository;
 import com.example.Urban.repository.EventRepository;
+import com.example.Urban.repository.ForgotPasswordRepository;
 import com.example.Urban.service.EmployeeMapper;
 import com.example.Urban.service.EmployeeNotFoundException;
 import com.example.Urban.service.EmployeeService;
@@ -184,13 +186,21 @@ public class EmployeeServiceImp implements EmployeeService {
         }
     }
 
+
+    @Autowired
+    private ForgotPasswordRepository forgotPasswordRepository;
     @Override
     public String deleteEmployeeJwt(int employeeId) {
         Optional<EmployeeEntity> empOptional = employeeRepository.findById(employeeId);
         if (empOptional.isPresent()) {
             EmployeeEntity employee = empOptional.get();
             AccountEntity account = employee.getAccount();
-            accountRepository.delete(account);
+
+            ForgotPasswordEntity forgotPassword = employee.getAccount().getForgotPassword();
+
+            if (forgotPassword != null) {
+                forgotPasswordRepository.delete(forgotPassword);
+            }
             fileStorageService.deleleEmployeePhoto(employee.getImage());
             employeeRepository.delete(employee);
             return "Employee deleted successfully";
