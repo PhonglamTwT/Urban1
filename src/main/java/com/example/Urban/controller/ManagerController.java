@@ -109,7 +109,7 @@ public class ManagerController {
         int otp = otpGenerator();
         MailBody mailBody = new MailBody();
         mailBody.setTo(email);
-        mailBody.setText("Your OTP for reset password " + otp);
+        mailBody.setText("パスワードをリセットするための OTP: " + otp);
         mailBody.setSubject("OTP");
         ForgotPasswordEntity fp = new ForgotPasswordEntity();
         fp.setOtp(otp);
