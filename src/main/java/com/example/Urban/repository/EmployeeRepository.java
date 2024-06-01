@@ -19,10 +19,5 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Intege
             "WHERE ev.day = :day", nativeQuery = true)
     List<EmployeeEntity> getByDay(@Param("day") LocalDate day);
 
-
-
-
-
-
     Optional<EmployeeEntity> findByEmail(String email);
 }

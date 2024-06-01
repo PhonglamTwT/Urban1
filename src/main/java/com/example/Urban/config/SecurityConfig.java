@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/employee/verifyEmail").permitAll()
                         .requestMatchers("/employee/verifyOTP").permitAll()
                         .requestMatchers("/employee/changePassword").permitAll()
-
+                        .requestMatchers("/employee/changePasswordProactive").permitAll()
                         .requestMatchers("/employee/showOneEmploy").hasAnyAuthority("admin", "user")
                         .requestMatchers("/employee/**").hasAnyAuthority("admin")
 

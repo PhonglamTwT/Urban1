@@ -282,6 +282,18 @@ public class EmployeeServiceImp implements EmployeeService {
         }
     }
 
+    @Override
+    public String changePasswordProactive(int employeeId, String newPassword, String oldPassword) {
+        EmployeeEntity emp = employeeRepository.findById(employeeId).orElseThrow(()->new RuntimeException("User not found"));
+        if(passwordEncoder.matches(oldPassword,emp.getAccount().getPassword())){
+            AccountEntity account = emp.getAccount();
+            account.setPassword(passwordEncoder.encode(newPassword));
+            accountRepository.save(account);
+            return "Change password success";
+        }
+        throw new RuntimeException("Change password fail");
+    }
+
     private void updateEmployeeDetails(EmployeeEntity employee, String image, String name, String email, String phone, String gender, String address, String position, String headquarter) {
 //        employee.setId(employee.getId());
         employee.setImage(image);

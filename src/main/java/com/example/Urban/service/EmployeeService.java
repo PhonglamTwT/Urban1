@@ -32,4 +32,6 @@ public interface EmployeeService {
     EmployeeEntity checkEmail(String email);
 
     String changePassword(String email, String password);
+
+    String changePasswordProactive(int employeeId, String newPassword, String oldPassword);
 }

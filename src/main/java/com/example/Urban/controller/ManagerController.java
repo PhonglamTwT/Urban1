@@ -152,4 +152,13 @@ public class ManagerController {
         String result = EmployeeService.changePassword(email,changePassword.getChangePassword());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @PostMapping("/changePasswordProactive")
+    public ResponseEntity<String> changePasswordProactive(@RequestParam int employeeId, @ModelAttribute ChangePassword changePassword, @RequestParam String oldPassword){
+        if(!Objects.equals(changePassword.getChangePassword(), changePassword.getRepeatPassword())){
+            return new ResponseEntity<>("Password not equal",HttpStatus.EXPECTATION_FAILED);
+        }
+        String result = EmployeeService.changePasswordProactive(employeeId,changePassword.getChangePassword(),oldPassword);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
 }
