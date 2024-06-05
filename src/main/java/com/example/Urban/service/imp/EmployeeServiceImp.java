@@ -58,6 +58,7 @@ public class EmployeeServiceImp implements EmployeeService {
                         .toString();
                 employeeDTO.setImage(imageUrl);
             }
+            employeeDTO.setUsername(employees.getAccount().getUsername());
 
 
 
@@ -82,10 +83,10 @@ public class EmployeeServiceImp implements EmployeeService {
                         .toString();
                 employeeDTO.setImage(imageUrl);
             }
-            employees.stream()
-                    .filter(employee -> employee.getId() == employeeDTO.getId())
-                    .findFirst()
-                    .ifPresent(employee -> employeeDTO.setUsername(employee.getAccount().getUsername()));
+//            employees.stream()
+//                    .filter(employee -> employee.getId() == employeeDTO.getId())
+//                    .findFirst()
+//                    .ifPresent(employee -> employeeDTO.setUsername(employee.getAccount().getUsername()));
         });
         return employeeDTOs;
     }
