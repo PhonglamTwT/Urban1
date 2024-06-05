@@ -16,7 +16,7 @@ public class EmployeeDTO {
     private String address;
     private String position;
     private String headquarter;
-
+    private String username;
 
     public void setAccount(AccountDTO accountDTO) {
 
