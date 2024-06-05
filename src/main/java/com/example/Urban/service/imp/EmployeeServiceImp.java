@@ -58,10 +58,13 @@ public class EmployeeServiceImp implements EmployeeService {
                         .toString();
                 employeeDTO.setImage(imageUrl);
             }
-            employeeDTO.setUsername(employees.getAccount().getUsername());
-
-
-
+//            String account = employees.getAccount().getUsername();
+//            if (account.isEmpty()){
+//                employeeDTO.setUsername("null");
+//            }
+//            else {
+//                employeeDTO.setUsername(account);
+//            }
         return employeeDTO;
     }
 
@@ -83,10 +86,16 @@ public class EmployeeServiceImp implements EmployeeService {
                         .toString();
                 employeeDTO.setImage(imageUrl);
             }
-//            employees.stream()
-//                    .filter(employee -> employee.getId() == employeeDTO.getId())
-//                    .findFirst()
-//                    .ifPresent(employee -> employeeDTO.setUsername(employee.getAccount().getUsername()));
+            employees.stream()
+                    .filter(employee -> employee.getId() == employeeDTO.getId())
+                    .findFirst()
+                    .ifPresent(employee ->{
+                        String temp = Optional.ofNullable(employee.getAccount())
+                                .map(account -> account.getUsername())
+                                .filter(username -> !username.isEmpty())
+                                .orElse("null");
+                        employeeDTO.setUsername(temp);
+                    });
         });
         return employeeDTOs;
     }
